@@ -36,12 +36,13 @@ app.get("/custom-credential-example/products", (req, res) => {
 })
 
 app.get("/simulate-webhook-call", (req, res) => {
-  let token = process.env.ACCESS_TOKEN
+  const sessionId = req.headers.authorization
+
   let url = process.env.URL
   const instance = axios.create({
     baseURL: url,
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${sessionId}`,
       'Content-type': 'application/json'
     },
     data: customCredentialHandler.collectData()
