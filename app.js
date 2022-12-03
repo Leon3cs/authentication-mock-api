@@ -1,4 +1,5 @@
 const express = require("express");
+const axios = require("axios").default
 const apiKeyHandler = require("./api-key")
 const customCredentialHandler = require("./custom-credential")
 const app = express();
@@ -32,6 +33,29 @@ app.get("/custom-credential-example/products", (req, res) => {
       message: 'invalid api_key'
     })
   }
+})
+
+app.get("/simulate-webhook-call", (req, res) => {
+  let token = process.env.ACCESS_TOKEN
+  let url = process.env.URL
+  const instance = axios.create({
+    baseURL: url,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-type': 'application/json'
+    },
+    data: customCredentialHandler.collectData()
+  })
+  instance
+  .post("/products", customCredentialHandler.collectData())
+  .then(data => {
+    console.log(data.status)
+    res.status(200).send('product data delivered')
+  })
+  .catch(error => {
+    console.log(error)
+    res.status(500).send(error)
+  })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
