@@ -40,15 +40,12 @@ app.get("/custom-credential-example/products", (req, res) => {
 app.post("/simulate-webhook-call", (req, res) => {
   const sessionId = req.body.sessionId
   const url = req.body.baseUrl
-  const instance = axios.create({
-    baseURL: url,
-    headers: {
+  axios
+  .post(url, JSON.stringify(customCredentialHandler.collectData()), {
+    headers:{
       'Authorization': `Bearer ${sessionId}`,
       'Content-type': 'application/json'
-    }
-  })
-  instance
-  .post("/products", JSON.stringify(customCredentialHandler.collectData()))
+    }})
   .then(data => {
     console.log(data.status)
     res.status(200).send('product data delivered')
