@@ -5,6 +5,8 @@ const customCredentialHandler = require("./custom-credential")
 const app = express();
 const port = process.env.PORT || 3001;
 
+app.use(express.json())
+
 app.get("/api-key-example/products", (req, res) => {
   if(apiKeyHandler.validateApiKey(req)){
     res.status(200).send(apiKeyHandler.collectData())
@@ -37,18 +39,16 @@ app.get("/custom-credential-example/products", (req, res) => {
 
 app.get("/simulate-webhook-call", (req, res) => {
   const sessionId = req.body.sessionId
-
-  let url = process.env.URL
+  const url = req.body.baseUrl
   const instance = axios.create({
     baseURL: url,
     headers: {
       'Authorization': `Bearer ${sessionId}`,
       'Content-type': 'application/json'
-    },
-    data: customCredentialHandler.collectData()
+    }
   })
   instance
-  .post("/products", customCredentialHandler.collectData())
+  .post("/products", JSON.stringify(customCredentialHandler.collectData()))
   .then(data => {
     console.log(data.status)
     res.status(200).send('product data delivered')
