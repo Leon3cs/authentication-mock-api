@@ -37,7 +37,7 @@ app.get("/custom-credential-example/products", (req, res) => {
   }
 })
 
-app.get("/simulate-webhook-call", (req, res) => {
+app.post("/simulate-webhook-call", (req, res) => {
   const sessionId = req.body.sessionId
   const url = req.body.baseUrl
   const instance = axios.create({
